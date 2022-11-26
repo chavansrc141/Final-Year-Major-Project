@@ -1,2 +1,3 @@
-# Final-Year-Major-Project
-Hyperspectral Image Classification and Band Selection using Reinforcement Learning
+# Hyperspectral Image Classification and Band Selection using Reinforcement Learning
+
+## Final-Year-Major-Project
