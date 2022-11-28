@@ -33,6 +33,7 @@ def get_model_compiled(shapeinput, num_class, w_decay=0):
     clf.add(Dense(100, kernel_regularizer=regularizers.l2(w_decay)))
     clf.add(Activation('relu'))
     clf.add(Dense(num_class, activation='softmax'))
+    clf.summary()
     clf.compile(loss=categorical_crossentropy,
                 optimizer=Adam(), metrics=['accuracy'])
     return clf
@@ -109,17 +110,20 @@ def main():
         clf = get_model_compiled(inputshape, num_class, w_decay=args.wdecay)
         valdata = (x_val, keras_to_categorical(y_val, num_class)) if args.use_val else (
             x_test, keras_to_categorical(y_test, num_class))
-        clf.fit(x_train, keras_to_categorical(y_train, num_class),
-                batch_size=args.batch_size,
-                epochs=args.epochs,
-                verbose=args.verbosetrain,
-                validation_data=valdata,
-                callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
-        del clf
+        # clf.fit(x_train, keras_to_categorical(y_train, num_class),
+        #         batch_size=args.batch_size,
+        #         epochs=args.epochs,
+        #         verbose=args.verbosetrain,
+        #         validation_data=valdata,
+        #         callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
+        # del clf
         K.clear_session()
         gc.collect()
-        clf = load_model("/tmp/best_model.h5")
-        pickle.dump(clf, open('cnn2d_trained_model.pkl', 'wb'))
+        # clf = load_model("/tmp/best_model.h5")
+        # save model and architecture to single file
+        # clf.save("cnn2d_trained_model_UP_1.h5")
+        # load model
+        clf = load_model('cnn2d_trained_model_UP_1.h5')
         print("PARAMETERS", clf.count_params())
         stats[pos, :] = mymetrics.reports(
             np.argmax(clf.predict(x_test), axis=1), y_test)[2]
