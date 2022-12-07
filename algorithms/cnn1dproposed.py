@@ -14,6 +14,7 @@ import pickle
 import numpy as np
 import sys
 import scipy.io as sio
+import time
 
 # Setting the parameters
 def set_params(args):
@@ -116,8 +117,7 @@ def main():
         x_test = x_test[..., np.newaxis]
         x_train = x_train[..., np.newaxis]
 
-        selected_bands = sio.loadmat(
-            '../results/drl_50_bands_pavia_university.mat')
+        selected_bands = sio.loadmat('../results/drl_50_bands_pavia_university.mat')
         selected_bands_array = selected_bands['selected_bands'][0]
 
         # -------------------- Adding Selected Optimal Bands -------------------
@@ -135,20 +135,20 @@ def main():
         clf = get_model_compiled(n_bands, num_class)
         valdata = (x_val, keras_to_categorical(y_val, num_class)) if args.use_val else (
             x_test, keras_to_categorical(y_test, num_class))
-        history = clf.fit(x_train, keras_to_categorical(y_train, num_class),
-                          batch_size=args.batch_size,
-                          epochs=args.epochs,
-                          verbose=args.verbosetrain,
-                          validation_data=valdata,
-                          callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
-        del clf
-        K.clear_session()
-        gc.collect()
+        # history = clf.fit(x_train, keras_to_categorical(y_train, num_class),
+        #                   batch_size=args.batch_size,
+        #                   epochs=args.epochs,
+        #                   verbose=args.verbosetrain,
+        #                   validation_data=valdata,
+        #                   callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
+        # del clf
+        # K.clear_session()
+        # gc.collect()
         clf = load_model("/tmp/best_model.h5")
         # save model and architecture to single file
-        clf.save("cnn1d_proposed_trained_model_UP.h5")
+        # clf.save("cnn1d_proposed_trained_model_UP.h5")
         # load model
-        # clf = load_model('cnn1d_trained_model_UP_1.h5')
+        clf = load_model('cnn1d_proposed_trained_model_UP.h5')
         print("PARAMETERS", clf.count_params())
         stats[pos, :] = mymetrics.reports(
             np.argmax(clf.predict(x_test), axis=1), y_test)[2]
@@ -156,4 +156,6 @@ def main():
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     main()
+    print("Time Requied: %s seconds" % (time.time() - start_time))
