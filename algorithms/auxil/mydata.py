@@ -46,13 +46,25 @@ def loadData(name, num_components=None, preprocessing="standard"):
     num_class = 15 if name == "UH" else 9 if name in [
         "UP", "DUP", "DUPr"] else 16
     shapeor = data.shape
+    print("**** mydata data.shape ***** ", data.shape, "\n*******\n")
+    print("**** mydata data ***** ", data, "\n*******\n")
     data = data.reshape(-1, data.shape[-1])
+    print("**** mydata data.shape after reshape ***** ", data.shape, "\n*******\n")
+    print("**** mydata data ***** ", data, "\n*******\n")
+    # print("**** mydata data.shape after reshape ***** ")
+    print(data, "\n*******\n")
+
     if num_components != None:
         data = PCA(n_components=num_components).fit_transform(data)
         shapeor = np.array(shapeor)
         shapeor[-1] = num_components
+        print("**** data.shape after PCA ***** ", data.shape, "\n*******\n")
+        print(data, "\n*******\n")
+
     if preprocessing == "standard":
         data = StandardScaler().fit_transform(data)
+        print("**** data.shape after preprocessing standard fit_transform ***** ", data.shape, "\n*******\n")
+        print(data, "\n*******\n")
     elif preprocessing == "minmax":
         data = MinMaxScaler().fit_transform(data)
     elif preprocessing == "none":

@@ -15,9 +15,11 @@ import numpy as np
 import sys
 import scipy.io as sio
 
-
+# Setting the parameters
 def set_params(args):
     args.batch_size = 100
+
+    # An epoch is the number of passes a training dataset takes around an algorithm.
     args.epochs = 300
     return args
 
@@ -70,18 +72,28 @@ def main():
                         help='Number of full training cycle on the training set')
     #########################################
 
+    # Passing the arguments
     args = parser.parse_args()
     state = {k: v for k, v in args._get_kwargs()}
 
+    print("** Arguments **\n", state, "\n")
+
     if args.set_parameters:
         args = set_params(args)
+        print("** args: ", args, "\n")
 
-    pixels, labels, num_class = \
-        mydata.loadData(args.dataset, num_components=args.components,
-                        preprocessing=args.preprocess)
+    pixels, labels, num_class = mydata.loadData(args.dataset, num_components=args.components, preprocessing=args.preprocess)
+    
+    print("** 1. Pixels **\n", pixels, "\n", pixels.shape, "\n*****\n")
+    print("** Labels **\n", labels, "\n*****\n")
+    print("** No of class **\n", num_class, "\n*****\n")
+
     pixels = pixels.reshape(-1, pixels.shape[-1])
+    print("** 2. Pixels **\n", pixels, "\n", pixels.shape, "\n*****\n")
 
     stats = np.ones((args.repeat, num_class+3)) * -1000.0  # OA, AA, K, Aclass
+    print("** Stats **\n", stats, "\n*****\n")
+
     for pos in range(args.repeat):
         rstate = args.random_state+pos if args.random_state != None else None
         if args.dataset in ["UH", "DIP", "DUP", "DIPr", "DUPr"]:
@@ -105,18 +117,19 @@ def main():
         x_train = x_train[..., np.newaxis]
 
         selected_bands = sio.loadmat(
-            '../results/drl_30_bands_pavia_university.mat')
+            '../results/drl_50_bands_pavia_university.mat')
         selected_bands_array = selected_bands['selected_bands'][0]
 
         # -------------------- Adding Selected Optimal Bands -------------------
         x_test = x_test[:, selected_bands_array.astype(int), :]
-        print(x_test.shape)
+        # print(x_test.shape)
         x_train = x_train[:, selected_bands_array.astype(int), :]
 
         # this is needed as it gives error while fitting if in argument we use --use_val
         x_val = x_val[:, selected_bands_array.astype(int), :]
-        print(x_train.shape)
+        # print(x_train.shape)
 
+        # print(x_train)
         n_bands, sequences = x_train.shape[1:]
 
         clf = get_model_compiled(n_bands, num_class)

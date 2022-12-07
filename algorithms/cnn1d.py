@@ -51,7 +51,7 @@ def main():
                         type=str, help='Method for split datasets')
     parser.add_argument('--random_state', default=None, type=int,
                         help='The seed of the pseudo random number generator to use when shuffling the data')
-    parser.add_argument('--tr_percent', default=0.15,
+    parser.add_argument('--tr_percent', default=0.30,
                         type=float, help='samples of train set')
     parser.add_argument('--use_val', action='store_true',
                         help='Use validation set')
