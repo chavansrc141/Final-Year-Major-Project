@@ -14,6 +14,7 @@ from keras.utils import to_categorical as keras_to_categorical
 import pickle
 import numpy as np
 import sys
+import time
 
 
 def set_params(args):
@@ -117,13 +118,13 @@ def main():
         #         validation_data=valdata,
         #         callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
         # del clf
-        K.clear_session()
-        gc.collect()
-        # clf = load_model("/tmp/best_model.h5")
+        # K.clear_session()
+        # gc.collect()
+        clf = load_model("/tmp/best_model.h5")
         # save model and architecture to single file
-        # clf.save("cnn2d_trained_model_UP_1.h5")
+        # clf.save("cnn2d_trained_model_UP.h5")
         # load model
-        clf = load_model('cnn2d_trained_model_UP_1.h5')
+        clf = load_model('cnn2d_trained_model_UP.h5')
         print("PARAMETERS", clf.count_params())
         stats[pos, :] = mymetrics.reports(
             np.argmax(clf.predict(x_test), axis=1), y_test)[2]
@@ -131,4 +132,6 @@ def main():
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     main()
+    print("Time Requied: %s seconds" % (time.time() - start_time))

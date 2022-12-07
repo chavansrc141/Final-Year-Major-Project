@@ -13,6 +13,7 @@ from keras.utils import to_categorical as keras_to_categorical
 import pickle
 import numpy as np
 import sys
+import time
 
 
 def set_params(args):
@@ -117,7 +118,7 @@ def main():
         gc.collect()
         clf = load_model("/tmp/best_model.h5")
         # save model and architecture to single file
-        clf.save("cnn1d_trained_model_UP.h5")
+        # clf.save("cnn1d_trained_model_UP.h5")
         # load model
         # clf = load_model('cnn1d_trained_model_UP.h5')
         print("PARAMETERS", clf.count_params())
@@ -127,4 +128,6 @@ def main():
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     main()
+    print("Time Requied: %s seconds" % (time.time() - start_time))
