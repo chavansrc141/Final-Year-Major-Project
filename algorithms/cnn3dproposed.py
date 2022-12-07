@@ -116,7 +116,7 @@ def main():
         x_train = x_train[..., np.newaxis]
 
         selected_bands = sio.loadmat(
-            '../results/drl_40_bands_pavia_university.mat')
+            '../results/drl_50_bands_pavia_university.mat')
         selected_bands_array = selected_bands['selected_bands'][0]
 
         # -------------------- Adding Selected Optimal Bands -------------------
@@ -134,20 +134,20 @@ def main():
             inputshape, num_class, w_decay=args.wdecay, lr=args.lr)
         valdata = (x_val, keras_to_categorical(y_val, num_class)) if args.use_val else (
             x_test, keras_to_categorical(y_test, num_class))
-        # history = clf.fit(x_train, keras_to_categorical(y_train, num_class),
-        #                   batch_size=args.batch_size,
-        #                   epochs=args.epochs,
-        #                   verbose=args.verbosetrain,
-        #                   validation_data=valdata,
-        #                   callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
-        # del clf
-        # K.clear_session()
-        # gc.collect()
+        history = clf.fit(x_train, keras_to_categorical(y_train, num_class),
+                          batch_size=args.batch_size,
+                          epochs=args.epochs,
+                          verbose=args.verbosetrain,
+                          validation_data=valdata,
+                          callbacks=[ModelCheckpoint("/tmp/best_model.h5", monitor='val_accuracy', verbose=0, save_best_only=True)])
+        del clf
+        K.clear_session()
+        gc.collect()
         clf = load_model("/tmp/best_model.h5")
         # save model and architecture to single file
-        # clf.save("cnn3d_proposed_trained_model_UP.h5")
+        clf.save("cnn3d_proposed_trained_model_UP_50.h5")
         # load model
-        clf = load_model('cnn3d_proposed_trained_model_UP.h5')
+        # clf = load_model('cnn3d_proposed_trained_model_UP.h5')
         print("PARAMETERS", clf.count_params())
         stats[pos, :] = mymetrics.reports(
             np.argmax(clf.predict(x_test), axis=1), y_test)[2]
